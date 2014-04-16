@@ -180,6 +180,16 @@ class ConfigurationManager implements \TYPO3\CMS\Core\SingletonInterface {
 			return $this->currentPageUid;
 		}
 
+		$rootPages = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('uid', 'pages', 'deleted=0 AND hidden=0 AND is_siteroot=1', '', '', '1');
+		if (count($rootPages) > 0) {
+			return $rootPages[0]['uid'];
+		}
+
+		$rootTemplates = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('pid', 'sys_template', 'deleted=0 AND hidden=0 AND root=1', '', '', '1');
+		if (count($rootTemplates) > 0) {
+			return $rootTemplates[0]['pid'];
+		}
+
 		return 0;
 	}
 
