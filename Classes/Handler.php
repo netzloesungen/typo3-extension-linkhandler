@@ -23,6 +23,7 @@ namespace AOE\Linkhandler;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * Linkhandler to process custom linking to any kind of configured record
@@ -31,7 +32,7 @@ namespace AOE\Linkhandler;
  * @author  Michael Klapper <michael.klapper@aoe.com>
  * @package Linkhandler
  */
-class Handler {
+class Handler implements SingletonInterface {
 
 	/**
 	 * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer

@@ -43,6 +43,11 @@ class ElementBrowserRecordList extends \TYPO3\CMS\Backend\RecordList\ElementBrow
 	protected $linkHandler = 'record';
 
 	/**
+	 * @var \TYPO3\CMS\Rtehtmlarea\BrowseLinks
+	 */
+	protected $browseLinksObj;
+
+	/**
 	 * Set the parameters that should be added to the link, in order to keep the required vars for the linkwizard
 	 * @param string $addPassOnParameters
 	 * @return void
@@ -59,6 +64,13 @@ class ElementBrowserRecordList extends \TYPO3\CMS\Backend\RecordList\ElementBrow
 	 */
 	public function setOverwriteLinkHandler($linkHandler) {
 		$this->linkHandler = $linkHandler;
+	}
+
+	/**
+	 * @param \TYPO3\CMS\Rtehtmlarea\BrowseLinks $browseLinksObj
+	 */
+	public function setBrowseLinksObj($browseLinksObj) {
+		$this->browseLinksObj = $browseLinksObj;
 	}
 
 	/**
@@ -81,7 +93,7 @@ class ElementBrowserRecordList extends \TYPO3\CMS\Backend\RecordList\ElementBrow
 		}
 
 		$currentImage = '';
-		if ($this->browselistObj->curUrlInfo['recordTable'] === $table && $this->browselistObj->curUrlInfo['recordUid'] === $uid) {
+		if ($this->browseLinksObj->curUrlInfo['recordTable'] === $table && $this->browseLinksObj->curUrlInfo['recordUid'] === $uid) {
 			$currentImage = '<img' .
 				\TYPO3\CMS\Backend\Utility\IconUtility::skinImg($GLOBALS['BACK_PATH'], 'gfx/blinkarrow_right.gif', 'width="5" height="9"') .
 				' class="c-blinkArrowL" alt="" />';
@@ -89,7 +101,7 @@ class ElementBrowserRecordList extends \TYPO3\CMS\Backend\RecordList\ElementBrow
 
 		$title = \TYPO3\CMS\Backend\Utility\BackendUtility::getRecordTitle($table, $row, FALSE, TRUE);
 
-		if (@$this->browselistObj->mode === 'rte') {
+		if ($this->browseLinksObj->mode === 'rte') {
 			//used in RTE mode:
 			$aOnClick = 'return link_spec(\'' . $this->linkHandler . ':' . $table . ':' . $uid . '\');';
 		} else {
@@ -107,9 +119,9 @@ class ElementBrowserRecordList extends \TYPO3\CMS\Backend\RecordList\ElementBrow
 	 */
 	public function ext_addP() {
 		$str = '&act=' . $GLOBALS['SOBE']->browser->act .
-			'&editorNo=' . $this->browselistObj->editorNo .
-			'&contentTypo3Language=' . $this->browselistObj->contentTypo3Language .
-			'&contentTypo3Charset=' . $this->browselistObj->contentTypo3Charset .
+			'&editorNo=' . $this->browseLinksObj->editorNo .
+			'&contentTypo3Language=' . $this->browseLinksObj->contentTypo3Language .
+			'&contentTypo3Charset=' . $this->browseLinksObj->contentTypo3Charset .
 			'&mode=' . $GLOBALS['SOBE']->browser->mode .
 			'&expandPage=' . $GLOBALS['SOBE']->browser->expandPage .
 			'&RTEtsConfigParams=' . \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('RTEtsConfigParams') .

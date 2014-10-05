@@ -87,12 +87,15 @@ class RecordTab implements \AOE\Linkhandler\TabHandlerInterface {
 	 */
 	static public function getLinkBrowserInfoArray($href, $tabsConfig) {
 		$info = array();
+		if (strpos($href, ':') === FALSE) {
+			return $info;
+		}
 		list($currentHandler, $table, $uid) = explode(':', $href);
 
 			// check the linkhandler TSConfig and find out  which config is responsible for the current table:
 		foreach ($tabsConfig as $key => $tabConfig) {
 
-			if ($currentHandler == 'record' || $currentHandler == $tabConfig['overwriteHandler']) {
+			if ($currentHandler === 'record' || $currentHandler == $tabConfig['overwriteHandler']) {
 				if ($table == $tabConfig['listTables']) {
 					$info['act'] = $key;
 				}
@@ -215,6 +218,7 @@ class RecordTab implements \AOE\Linkhandler\TabHandlerInterface {
 			$dblist->noControlPanels = 1;
 			$dblist->clickMenuEnabled = 0;
 			$dblist->tableList = implode(',', $tablesArr);
+			$dblist->setBrowseLinksObj($this->browseLinksObj);
 
 			if (array_key_exists('overwriteHandler', $this->configuration)) {
 				$dblist->setOverwriteLinkHandler($this->configuration['overwriteHandler']);
