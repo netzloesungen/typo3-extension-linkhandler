@@ -23,6 +23,7 @@ namespace AOE\Linkhandler;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * hook to adjust linkwizard (linkbrowser)
@@ -67,8 +68,8 @@ class RecordTab implements \AOE\Linkhandler\TabHandlerInterface {
 		$this->configuration = $configuration;
 		$this->pointer = $browseLinksObj->pointer;
 
-		if (is_array(\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('P'))) {
-			$environment = \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl('P', \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('P'));
+		if (is_array(GeneralUtility::_GP('P'))) {
+			$environment = GeneralUtility::implodeArrayForUrl('P', GeneralUtility::_GP('P'));
 		}
 
 		$this->addPassOnParams = $addPassOnParams . $environment;
@@ -120,7 +121,7 @@ class RecordTab implements \AOE\Linkhandler\TabHandlerInterface {
 		}
 
 		/** @var \AOE\Linkhandler\Record\RecordTree $pagetree*/
-		$pagetree = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\Linkhandler\Record\RecordTree');
+		$pagetree = GeneralUtility::makeInstance('AOE\Linkhandler\Record\RecordTree');
 		/** Initialize page tree, @see \TYPO3\CMS\Backend\Tree\View\AbstractTreeView */
 		$pagetree->init();
 		$pagetree->browselistObj = $this->browseLinksObj;
@@ -168,7 +169,7 @@ class RecordTab implements \AOE\Linkhandler\TabHandlerInterface {
 			if (!strcmp(trim($tables), '*')) {
 				$tablesArr = array_keys($GLOBALS['TCA']);
 			} else {
-				$tablesArr = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $tables, 1);
+				$tablesArr = GeneralUtility::trimExplode(',', $tables, 1);
 			}
 			reset($tablesArr);
 
@@ -184,16 +185,16 @@ class RecordTab implements \AOE\Linkhandler\TabHandlerInterface {
 			if (in_array('pages', $tablesArr)) {
 				$ficon = \TYPO3\CMS\Backend\Utility\IconUtility::getIcon('pages', $mainPageRec);
 				$aTag = "<a href=\"#\" onclick=\"return insertElement('pages', '" . $mainPageRec['uid'] . "', 'db', " .
-					\TYPO3\CMS\Core\Utility\GeneralUtility::quoteJSvalue($mainPageRec['title']) .
+					GeneralUtility::quoteJSvalue($mainPageRec['title']) .
 					", '', '', '" . $ficon . "', '',1);\">";
 				$aTag2 = "<a href=\"#\" onclick=\"return insertElement('pages', '" . $mainPageRec['uid'] . "', 'db', " .
-					\TYPO3\CMS\Core\Utility\GeneralUtility::quoteJSvalue($mainPageRec['title']) .
+					GeneralUtility::quoteJSvalue($mainPageRec['title']) .
 					", '', '', '" . $ficon . "', '',0);\">";
 				$aTagEnd = '</a>';
 			}
 			$picon = \TYPO3\CMS\Backend\Utility\IconUtility::getIconImage('pages', $mainPageRec, $GLOBALS['BACK_PATH'], '');
 			$pBicon = $aTag2 ? '<img' . \TYPO3\CMS\Backend\Utility\IconUtility::skinImg($GLOBALS['BACK_PATH'], 'gfx/plusbullet2.gif','width="18" height="16"') . ' alt="" />' : '';
-			$pText = htmlspecialchars(\TYPO3\CMS\Core\Utility\GeneralUtility::fixed_lgd_cs($mainPageRec['title'], $titleLen));
+			$pText = htmlspecialchars(GeneralUtility::fixed_lgd_cs($mainPageRec['title'], $titleLen));
 			$out .= $picon . $aTag2 . $pBicon . $aTagEnd . $aTag . $pText . $aTagEnd . '<br />';
 
 				// Initialize the record listing:
@@ -205,10 +206,9 @@ class RecordTab implements \AOE\Linkhandler\TabHandlerInterface {
 				// Generate the record list:
 				// unfortunately we have to set weird dependencies.
 			/** @var \AOE\Linkhandler\Record\ElementBrowserRecordList $dblist */
-			$dblist = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('AOE\Linkhandler\Record\ElementBrowserRecordList');
+			$dblist = GeneralUtility::makeInstance('AOE\Linkhandler\Record\ElementBrowserRecordList');
 			$dblist->setAddPassOnParameters($this->addPassOnParams);
-			$dblist->browselistObj = $this->browseLinksObj;
-			$dblist->this->pObjScript = $this->browseLinksObj->this->pObjScript;
+
 			$dblist->backPath = $GLOBALS['BACK_PATH'];
 			$dblist->thumbs = 0;
 			$dblist->calcPerms = $GLOBALS['BE_USER']->calcPerms($pageinfo);
@@ -220,15 +220,14 @@ class RecordTab implements \AOE\Linkhandler\TabHandlerInterface {
 				$dblist->setOverwriteLinkHandler($this->configuration['overwriteHandler']);
 			}
 
-			$dblist->start($id, \TYPO3\CMS\Core\Utility\GeneralUtility::_GP('table'), $pointer,
-				\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('search_field'),
-				\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('search_levels'),
-				\TYPO3\CMS\Core\Utility\GeneralUtility::_GP('showLimit')
+			$dblist->start($id, GeneralUtility::_GP('table'), $pointer,
+				GeneralUtility::_GP('search_field'),
+				GeneralUtility::_GP('search_levels'),
+				GeneralUtility::_GP('showLimit')
 			);
 
 			$dblist->setDispFields();
 			$dblist->generateList();
-			$dblist->writeBottom();
 
 				//	Add the HTML for the record list to output variable:
 			$out .= $dblist->HTMLcode;
