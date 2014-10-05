@@ -24,6 +24,8 @@ namespace AOE\Linkhandler;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Linkhandler to process custom linking to any kind of configured record
@@ -56,7 +58,7 @@ class Handler implements SingletonInterface {
 
 		// extract link params like "target", "css-class" or "title"
 		$additionalLinkParameters = str_replace($linkHandlerKeyword . ':' . $linkHandlerValue, '', $linkParameters);
-		list ($recordTableName, $recordUid) = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(':', $linkHandlerValue);
+		list ($recordTableName, $recordUid) = GeneralUtility::trimExplode(':', $linkHandlerValue);
 
 		$recordArray = $this->getCurrentRecord($recordTableName, $recordUid);
 		if ($this->isRecordLinkable($recordTableName, $typoScriptConfiguration, $recordArray)) {
@@ -171,12 +173,11 @@ class Handler implements SingletonInterface {
 
 			// merge recursive the "additionalParams" from "$typoScriptConfiguration" with the "$typoLinkConfigurationArray"
 		if ( array_key_exists('additionalParams', $typoLinkConfigurationArray) ) {
-			$typoLinkConfigurationArray['additionalParams'] = \TYPO3\CMS\Core\Utility\GeneralUtility::implodeArrayForUrl(
+			$additionalParams = GeneralUtility::explodeUrl2Array($linkConfigurationArray[$recordTableName . '.']['additionalParams']);
+			ArrayUtility::mergeRecursiveWithOverrule($additionalParams, GeneralUtility::explodeUrl2Array($typoLinkConfigurationArray['additionalParams']));
+			$typoLinkConfigurationArray['additionalParams'] = GeneralUtility::implodeArrayForUrl(
 				'',
-				\TYPO3\CMS\Core\Utility\GeneralUtility::array_merge_recursive_overrule(
-					\TYPO3\CMS\Core\Utility\GeneralUtility::explodeUrl2Array($linkConfigurationArray[$recordTableName . '.']['additionalParams']),
-					\TYPO3\CMS\Core\Utility\GeneralUtility::explodeUrl2Array($typoLinkConfigurationArray['additionalParams'])
-				)
+				$additionalParams
 			);
 		}
 
