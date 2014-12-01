@@ -66,6 +66,7 @@ class Handler implements SingletonInterface {
 			$this->localContentObject = clone $contentObjectRenderer;
 			$this->localContentObject->start($recordArray, '');
 			$typoScriptConfiguration[$recordTableName . '.']['parameter'] .= $additionalLinkParameters;
+			unset($typoLinkConfiguration['parameter']);
 
 			$currentLinkConfigurationArray = $this->mergeTypoScript($typoScriptConfiguration, $typoLinkConfiguration, $recordTableName);
 
